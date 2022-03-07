@@ -6,8 +6,18 @@
 #include <iomanip>
 #include <cassert>
 
-class MapChip
+class MapChip final
 {
+private:
+	MapChip();
+	~MapChip();
+
+public:
+	MapChip(const MapChip& mapChip) = delete;
+	MapChip& operator=(const MapChip& mapChip) = delete;
+
+	static MapChip* GetInstance();
+
 public:
 	//CSVÉtÉ@ÉCÉãì«Ç›çûÇ›
 	void CsvLoad(int mapChipMaxX, int mapChipMaxY, std::string fName);

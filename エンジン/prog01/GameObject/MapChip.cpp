@@ -1,5 +1,19 @@
 #include "MapChip.h"
 
+MapChip::MapChip()
+{
+}
+
+MapChip::~MapChip()
+{
+}
+
+MapChip* MapChip::GetInstance()
+{
+	static MapChip instance;
+	return &instance;
+}
+
 void MapChip::CsvLoad(int mapChipMaxX, int mapChipMaxY, std::string fName)
 {
 	std::ifstream ifs(fName);
