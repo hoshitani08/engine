@@ -62,16 +62,6 @@ private: // メンバ変数
 	//パーティクル
 	std::unique_ptr<ParticleManager> particleMan;
 	//オブジェクト
-	std::unique_ptr<Model> modelSkydome;
-	std::unique_ptr<Model> modelGround;
-	std::unique_ptr<Model> modelFighter;
-	std::unique_ptr<Model> modelSphere;
-
-	std::unique_ptr<Object3d> objSkydome;
-	std::unique_ptr<Object3d> objGround;
-	std::unique_ptr<Object3d> objFighter;
-	std::unique_ptr<Object3d> objSphere;
-
 	std::unique_ptr<FbxObject3d> fbxObject3d;
 	std::unique_ptr<FbxModel> fbxModel;
 

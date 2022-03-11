@@ -64,24 +64,13 @@ void GameScene::Initialize()
 	light->SetCircleShadowActive(0, true);
 
 	// モデル読み込み
-	modelSkydome = Model::CreateFromObject("skydome");
-	modelGround = Model::CreateFromObject("ground");
-	modelFighter = Model::CreateFromObject("chr_sword");
-	modelSphere = Model::CreateFromObject("sphere", true);
 
 	// 3Dオブジェクト生成
-	objSkydome = Object3d::Create(modelSkydome.get());
-	objGround = Object3d::Create(modelGround.get());
-	objFighter = Object3d::Create(modelFighter.get());
-	objSphere = Object3d::Create(modelSphere.get());
-
-	objFighter->SetPosition(XMFLOAT3(fighterPos));
-	objSphere->SetPosition({ -1, 1, 0 });
 
 	//.fbxの名前を指定してモデルを読み込む
 	fbxModel = FbxLoader::GetInstance()->LoadModelFromFile("uma");
 	// FBXオブジェクト生成
-	fbxObject3d = FbxObject3d::Create(fbxModel.get());
+	fbxObject3d = FbxObject3d::Create(fbxModel.get(), true);
 	//アニメーション
 	fbxObject3d->PlayAnimation();
 
@@ -90,7 +79,7 @@ void GameScene::Initialize()
 
 	// カメラ注視点をセット
 	camera->SetTarget({ 0, 0, 0 });
-	camera->SetEye({ 0,10,-1 });
+	camera->SetEye({ 0,1,-15 });
 }
 
 void GameScene::Finalize()
@@ -104,28 +93,9 @@ void GameScene::Update()
 	camera->Update();
 	particleMan->Update();
 
-	// オブジェクト移動
-	if (input->PushKey(DIK_W) || input->PushKey(DIK_S) || input->PushKey(DIK_D) || input->PushKey(DIK_A))
-	{
-		// 移動後の座標を計算
-		if (input->PushKey(DIK_W))
-		{
-			fighterPos[1] += 0.1f;
-		}
-		else if (input->PushKey(DIK_S))
-		{
-			fighterPos[1] -= 0.1f;
-		}
-
-		if (input->PushKey(DIK_D))
-		{
-			fighterPos[0] += 0.1f;
-		}
-		else if (input->PushKey(DIK_A))
-		{
-			fighterPos[0] -= 0.1f;
-		}
-	}
+	XMFLOAT3 rot = fbxObject3d->GetRotation();
+	rot.y += 1.0f;
+	fbxObject3d->SetRotation(rot);
 
 	if (input->TriggerKey(DIK_C))
 	{
@@ -135,24 +105,6 @@ void GameScene::Update()
 	{
 		SceneManager::GetInstance()->ChangeScene("GameOverScene");
 	}
-
-	XMFLOAT3 rot = objSphere->GetRotation();
-	rot.y += 1.0f;
-	objSphere->SetRotation(rot);
-	objFighter->SetRotation(rot);
-
-	light->SetCircleShadowDir(0, XMVECTOR({ circleShadowDir[0], circleShadowDir[1], circleShadowDir[2], 0 }));
-	light->SetCircleShadowCasterPos(0, XMFLOAT3({ fighterPos[0], fighterPos[1], fighterPos[2] }));
-	light->SetCircleShadowAtten(0, XMFLOAT3(circleShadowAtten));
-	light->SetCircleShadowFactorAngle(0, XMFLOAT2(circleShadowFactorAngle));
-
-	objFighter->SetPosition(XMFLOAT3({ fighterPos[0], fighterPos[1], fighterPos[2] }));
-
-
-	objSkydome->Update();
-	objGround->Update();
-	objFighter->Update();
-	objSphere->Update();
 
 	fbxObject3d->Update();
 	// 全ての衝突をチェック
@@ -167,7 +119,7 @@ void GameScene::Draw()
 	// 背景スプライト描画前処理
 	Sprite::PreDraw(cmdList);
 	// 背景スプライト描画
-	sprite->Draw();
+	
 	// スプライト描画後処理
 	Sprite::PostDraw();
 	// 深度バッファクリア
@@ -176,10 +128,7 @@ void GameScene::Draw()
 #pragma region 3Dオブジェクト描画
 	// 3Dオブクジェクトの描画
 	Object3d::PreDraw(cmdList);
-	objSkydome->Draw();
-	objGround->Draw();
-	objFighter->Draw();
-	objSphere->Draw();
+	
 	Object3d::PostDraw();
 #pragma endregion 3Dオブジェクト描画
 #pragma region 3Dオブジェクト(FBX)描画
