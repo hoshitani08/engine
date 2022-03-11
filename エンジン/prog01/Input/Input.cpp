@@ -4,6 +4,8 @@
 #pragma comment(lib, "dinput8.lib")
 #pragma comment(lib, "dxguid.lib")
 
+using namespace DirectX;
+
 bool Input::Initialize(HINSTANCE hInstance, HWND hwnd)
 {
 	HRESULT result = S_FALSE;
@@ -291,6 +293,19 @@ bool Input::PushPadStickLeft()
 	}
 
 	return false;
+}
+
+XMFLOAT2& Input::PadStickGradient()
+{
+	float x = padData.lX / 1000;
+	float y = padData.lY / 1000;
+	return XMFLOAT2(x, y);
+}
+
+double Input::PadStickAngle()
+{
+	double radian = atan2(padData.lY - 0, padData.lX - 0);
+	return radian * (180.0f / 3.14159265359f);
 }
 
 bool Input::TriggerPadLeft()
