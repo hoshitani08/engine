@@ -374,7 +374,7 @@ void FbxObject3d::LoadAnimation()
 	{
 		//仮データ
 		Animation tempData;
-		//0番のアニメーション取得
+		//i番のアニメーション取得
 		tempData.animstack = fbxScene->GetSrcObject<FbxAnimStack>(i);
 		//アニメーションの名前を取得
 		const char* animstackname = tempData.animstack->GetName();
@@ -387,6 +387,9 @@ void FbxObject3d::LoadAnimation()
 
 void FbxObject3d::PlayAnimation(int animationNumber)
 {
+	FbxScene* fbxScene = model->GetFbxScene();
+	//アニメーションの変更
+	fbxScene->SetCurrentAnimationStack(animationData[animationNumber].animstack);
 	//開始時間取得
 	startTime = animationData[animationNumber].takeinfo->mLocalTimeSpan.GetStart();
 	//終了時間取得
