@@ -50,6 +50,27 @@ void FbxModel::CreateBuffers(ID3D12Device* device)
     ibView.Format = DXGI_FORMAT_R16_UINT;
     ibView.SizeInBytes = sizeIB;
 
+    // 定数バッファ生成
+    result = device->CreateCommittedResource(
+        &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+        D3D12_HEAP_FLAG_NONE,
+        &CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferDataMaterial) + 0xff) & ~0xff),
+        D3D12_RESOURCE_STATE_GENERIC_READ,
+        nullptr,
+        IID_PPV_ARGS(&constBufferMaterial));
+
+    // 定数バッファへデータ転送
+    ConstBufferDataMaterial* constMapMaterial = nullptr;
+    result = constBufferMaterial->Map(0, nullptr, (void**)&constMapMaterial);
+    if (SUCCEEDED(result))
+    {
+        constMapMaterial->baseColor = baseColor;
+        constMapMaterial->metalness = metalness;
+        constMapMaterial->specular = specular;
+        constMapMaterial->roughness = roughness;
+        constBufferMaterial->Unmap(0, nullptr);
+    }
+
     // テクスチャ画像データ
     const DirectX::Image* img = scratchImg.GetImage(0, 0, 0); // 生データ抽出
     //assert(img);
@@ -115,6 +136,8 @@ void FbxModel::Draw(ID3D12GraphicsCommandList* cmdList)
     cmdList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
     // シェーダリソースビューをセット
     cmdList->SetGraphicsRootDescriptorTable(1, descHeapSRV->GetGPUDescriptorHandleForHeapStart());
+    // 定数バッファビューをセット
+    cmdList->SetGraphicsRootConstantBufferView(2, constBufferMaterial->GetGPUVirtualAddress());
 
     // 描画コマンド
     cmdList->DrawIndexedInstanced((UINT)indices.size(), 1, 0, 0, 0);

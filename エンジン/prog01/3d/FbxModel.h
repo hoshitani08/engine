@@ -79,6 +79,21 @@ public: // サブクラス
 		}
 	};
 
+
+	struct ConstBufferDataMaterial
+	{
+		//アルベド
+		XMFLOAT3 baseColor;
+		//金属度
+		float metalness;
+		//鏡面反射度
+		float specular;
+		//粗さ
+		float roughness;
+		//パディング(16Byte境界)
+		float pad[2];
+	};
+
 public:
 	//バッファ生成
 	void CreateBuffers(ID3D12Device* device);
@@ -128,4 +143,16 @@ private:
 	D3D12_INDEX_BUFFER_VIEW ibView = {};
 	//SRV用デスクリプタヒープ
 	ComPtr<ID3D12DescriptorHeap> descHeapSRV;
+
+private:
+	//アルベド
+	XMFLOAT3 baseColor = { 1,1,1 };
+	//金属度
+	float metalness = 0.0f;
+	//鏡面反射度
+	float specular = 0.5f;
+	//粗さ
+	float roughness = 0.0f;
+	//定数バッファ(マテリアル)
+	ComPtr<ID3D12Resource> constBufferMaterial;
 };

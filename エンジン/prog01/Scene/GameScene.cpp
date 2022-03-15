@@ -53,8 +53,10 @@ void GameScene::Initialize()
 
 	//ライト生成
 	light = LightGroup::Create();
-	//3Dオブジェクトにライトをセット
+	//.objオブジェクトにライトをセット
 	Object3d::SetLight(light.get());
+	//.fbxオブジェクトにライトをセット
+	FbxObject3d::SetLight(light.get());
 	light->SetDirLightActive(0, true);
 	light->SetDirLightActive(1, true);
 	light->SetDirLightActive(2, true);
@@ -68,18 +70,18 @@ void GameScene::Initialize()
 	// 3Dオブジェクト生成
 
 	//.fbxの名前を指定してモデルを読み込む
-	fbxModel = FbxLoader::GetInstance()->LoadModelFromFile("uma");
+	fbxModel = FbxLoader::GetInstance()->LoadModelFromFile("SpherePBR");
 	// FBXオブジェクト生成
-	fbxObject3d = FbxObject3d::Create(fbxModel.get(), true);
+	fbxObject3d = FbxObject3d::Create(fbxModel.get());
 	//アニメーション
-	fbxObject3d->PlayAnimation();
+	//fbxObject3d->PlayAnimation();
 
 	//サウンド再生
 	Audio::GetInstance()->LoadWave(0, "Resources/Alarm01.wav");
 
 	// カメラ注視点をセット
 	camera->SetTarget({ 0, 0, 0 });
-	camera->SetEye({ 0,1,-15 });
+	camera->SetEye({ -15, 0, 0 });
 }
 
 void GameScene::Finalize()
@@ -93,9 +95,9 @@ void GameScene::Update()
 	camera->Update();
 	particleMan->Update();
 
-	XMFLOAT3 rot = fbxObject3d->GetRotation();
+	/*XMFLOAT3 rot = fbxObject3d->GetRotation();
 	rot.y += 1.0f;
-	fbxObject3d->SetRotation(rot);
+	fbxObject3d->SetRotation(rot);*/
 
 	if (input->TriggerKey(DIK_C))
 	{

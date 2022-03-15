@@ -302,39 +302,99 @@ void FbxLoader::ParseMaterial(FbxModel* model, FbxNode* fbxNode)
 
 		if (material)
 		{
-			// FbxSurfaceLambertクラスかどうかを調べる
-			if (material->GetClassId().Is(FbxSurfaceLambert::ClassId))
+			//マテリアル名(デバック用)
+			string name = material->GetName();
+
+			//ベースカラー
+			const FbxProperty propBaseColor = FbxSurfaceMaterialUtils::GetProperty("baseColor", material);
+			if (propBaseColor.IsValid())
 			{
-				FbxSurfaceLambert* lambert = static_cast<FbxSurfaceLambert*>(material);
-
-				//環境光係数
-				FbxPropertyT<FbxDouble3> ambient = lambert->Ambient;
-				model->ambient.x = (float)ambient.Get()[0];
-				model->ambient.y = (float)ambient.Get()[1];
-				model->ambient.z = (float)ambient.Get()[2];
-
-				//拡散反射光係数
-				FbxPropertyT<FbxDouble3> diffuse = lambert->Diffuse;
-				model->diffuse.x = (float)diffuse.Get()[0];
-				model->diffuse.y = (float)diffuse.Get()[1];
-				model->diffuse.z = (float)diffuse.Get()[2];
+				//FbxDouble3としてプロパティの値を読み取り
+				FbxDouble3 baseColor = propBaseColor.Get<FbxDouble3>();
+				//モデルに読み取った値を書き込む
+				model->baseColor.x = (float)baseColor.Buffer()[0];
+				model->baseColor.y = (float)baseColor.Buffer()[1];
+				model->baseColor.z = (float)baseColor.Buffer()[2];
 			}
 
-			// ディフューズテクスチャを取り出す
-			const FbxProperty diffuseProperty = material->FindProperty(FbxSurfaceMaterial::sDiffuse);
-			if (diffuseProperty.IsValid())
+			//金属度
+			const FbxProperty propMetalness = FbxSurfaceMaterialUtils::GetProperty("metalness", material);
+			if (propMetalness.IsValid())
 			{
-				const FbxFileTexture* texture = diffuseProperty.GetSrcObject<FbxFileTexture>();
-				if (texture)
-				{
-					const char* filepath = texture->GetFileName();
-					// ファイルパスからファイル名抽出
-					string path_str(filepath);
-					string name = ExtractFileName(path_str);
-					// テクスチャ読み込み
-					LoadTexture(model, baseDirectory + model->name + "/" + name);
-					textureLoaded = true;
-				}
+				//モデルに読み取った値を書き込む
+				model->metalness = propMetalness.Get<float>();
+			}
+
+			//隙間
+			const FbxProperty propSpecular = FbxSurfaceMaterialUtils::GetProperty("specular", material);
+			if (propSpecular.IsValid())
+			{
+				//モデルに読み取った値を書き込む
+				model->specular = propSpecular.Get<float>();
+			}
+
+			//粗さ
+			const FbxProperty propSpecularRoughness = FbxSurfaceMaterialUtils::GetProperty("specularRoughness", material);
+			if (propSpecularRoughness.IsValid())
+			{
+				//モデルに読み取った値を書き込む
+				model->roughness = propSpecularRoughness.Get<float>();
+			}
+
+			//サブサーフェス
+			const FbxProperty propSubsurface = FbxSurfaceMaterialUtils::GetProperty("subsurface", material);
+			if (propSubsurface.IsValid())
+			{
+				//モデルに読み取った値を書き込む
+				float subsurface = propSubsurface.Get<float>();
+			}
+
+			//鏡面反射色
+			const FbxProperty propSpecularColor = FbxSurfaceMaterialUtils::GetProperty("specularColor", material);
+			if (propSpecularColor.IsValid())
+			{
+				//モデルに読み取った値を書き込む
+				float specularColor = propSpecularColor.Get<float>();
+			}
+
+			//異方性反射率
+			const FbxProperty propSpecularAnisotropy = FbxSurfaceMaterialUtils::GetProperty("specularAnisotropy", material);
+			if (propSpecularAnisotropy.IsValid())
+			{
+				//モデルに読み取った値を書き込む
+				float specularColor = propSpecularAnisotropy.Get<float>();
+			}
+
+			//ツヤ色
+			const FbxProperty propSheenColor = FbxSurfaceMaterialUtils::GetProperty("sheenColor", material);
+			if (propSheenColor.IsValid())
+			{
+				//モデルに読み取った値を書き込む
+				float sheenColor = propSheenColor.Get<float>();
+			}
+
+			//ツヤ色
+			const FbxProperty propSheen = FbxSurfaceMaterialUtils::GetProperty("sheen", material);
+			if (propSheen.IsValid())
+			{
+				//モデルに読み取った値を書き込む
+				float sheen = propSheen.Get<float>();
+			}
+
+			//クリア塗装の粗さ
+			const FbxProperty propCoatRoughness = FbxSurfaceMaterialUtils::GetProperty("coatRoughness", material);
+			if (propCoatRoughness.IsValid())
+			{
+				//モデルに読み取った値を書き込む
+				float coatRoughness = propCoatRoughness.Get<float>();
+			}
+
+			//クリア塗装
+			const FbxProperty propCoat = FbxSurfaceMaterialUtils::GetProperty("coat", material);
+			if (propCoat.IsValid())
+			{
+				//モデルに読み取った値を書き込む
+				float coat = propCoat.Get<float>();
 			}
 		}
 
