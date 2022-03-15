@@ -50,9 +50,6 @@
     <Filter Include="エンジンシステム\GameObject">
       <UniqueIdentifier>{98599318-2f3b-4ddf-a2db-fde526f5552e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="エンジンシステム\3d\OBJ\Light">
-      <UniqueIdentifier>{1325bed7-614d-4884-af75-f595a1df194a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="シェーダーファイル\FBX">
       <UniqueIdentifier>{a8f948c3-4efa-4b00-a684-4551beae6fc8}</UniqueIdentifier>
     </Filter>
@@ -73,6 +70,9 @@
     </Filter>
     <Filter Include="ゲームシステム\Besa\Scene">
       <UniqueIdentifier>{83995099-a486-4534-b18a-6d55403c3d00}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="エンジンシステム\3d\Light">
+      <UniqueIdentifier>{1325bed7-614d-4884-af75-f595a1df194a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -195,7 +195,7 @@
       <Filter>エンジンシステム\GameObject</Filter>
     </ClCompile>
     <ClCompile Include="3d\LightGroup.cpp">
-      <Filter>エンジンシステム\3d\OBJ\Light</Filter>
+      <Filter>エンジンシステム\3d\Light</Filter>
     </ClCompile>
     <ClCompile Include="Scene\TitleScene.cpp">
       <Filter>ゲームシステム\Scene</Filter>
@@ -317,19 +317,19 @@
       <Filter>エンジンシステム\GameObject</Filter>
     </ClInclude>
     <ClInclude Include="3d\DirectionalLight.h">
-      <Filter>エンジンシステム\3d\OBJ\Light</Filter>
+      <Filter>エンジンシステム\3d\Light</Filter>
     </ClInclude>
     <ClInclude Include="3d\LightGroup.h">
-      <Filter>エンジンシステム\3d\OBJ\Light</Filter>
+      <Filter>エンジンシステム\3d\Light</Filter>
     </ClInclude>
     <ClInclude Include="PointLight.h">
-      <Filter>エンジンシステム\3d\OBJ\Light</Filter>
+      <Filter>エンジンシステム\3d\Light</Filter>
     </ClInclude>
     <ClInclude Include="SpotLight.h">
-      <Filter>エンジンシステム\3d\OBJ\Light</Filter>
+      <Filter>エンジンシステム\3d\Light</Filter>
     </ClInclude>
     <ClInclude Include="CircleShadow.h">
-      <Filter>エンジンシステム\3d\OBJ\Light</Filter>
+      <Filter>エンジンシステム\3d\Light</Filter>
     </ClInclude>
     <ClInclude Include="Scene\TitleScene.h">
       <Filter>ゲームシステム\Scene</Filter>

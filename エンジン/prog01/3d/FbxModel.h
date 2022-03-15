@@ -101,9 +101,21 @@ public:
 	void Draw(ID3D12GraphicsCommandList* cmdList);
 	//モデルの変形行列取得
 	const XMMATRIX& GetModelTransform() { return meshNode->globalTransform; }
+	//マテリアルパラメータ転送
+	void TransferMaterial();
+
 	//getrer
 	std::vector<Bone>& GetBones() { return bones; }
 	FbxScene* GetFbxScene() { return fbxScene; }
+	const XMFLOAT3& GetBaseColor() { return baseColor; }
+	float GetMetalness() { return metalness; }
+	float GetSpecular() { return specular; }
+	float GetRoughness() { return roughness; }
+	//setter
+	void SetBaseColor(const XMFLOAT3& _baseColor) { baseColor = _baseColor; }
+	void SetMetalness(float _metalness) { metalness = _metalness; }
+	void SetSpecular(float _specular) { specular = _specular; }
+	void SetRoughness(float _roughness) { roughness = _roughness; }
 
 	//デストラクタ
 	~FbxModel();
@@ -150,9 +162,9 @@ private:
 	//金属度
 	float metalness = 0.0f;
 	//鏡面反射度
-	float specular = 0.5f;
+	float specular = 1.0f;
 	//粗さ
-	float roughness = 0.0f;
+	float roughness = 1.0f;
 	//定数バッファ(マテリアル)
 	ComPtr<ID3D12Resource> constBufferMaterial;
 };
