@@ -315,6 +315,19 @@ void FbxLoader::ParseMaterial(FbxModel* model, FbxNode* fbxNode)
 				model->baseColor.x = (float)baseColor.Buffer()[0];
 				model->baseColor.y = (float)baseColor.Buffer()[1];
 				model->baseColor.z = (float)baseColor.Buffer()[2];
+
+				const FbxFileTexture* texture = propBaseColor.GetSrcObject<FbxFileTexture>();
+				if (texture)
+				{
+					const char* filepath = texture->GetFileName();
+					// ファイルパスからファイル名抽出
+					string path_str(filepath);
+					string name = ExtractFileName(path_str);
+					// テクスチャ読み込み
+					LoadTexture(&model->baseTexture, baseDirectory + model->name + "/" + name);
+					model->baseColor = { 0,0,0 };
+					textureLoaded = true;
+				}
 			}
 
 			//金属度
@@ -323,6 +336,19 @@ void FbxLoader::ParseMaterial(FbxModel* model, FbxNode* fbxNode)
 			{
 				//モデルに読み取った値を書き込む
 				model->metalness = propMetalness.Get<float>();
+
+				const FbxFileTexture* texture = propMetalness.GetSrcObject<FbxFileTexture>();
+				if (texture)
+				{
+					const char* filepath = texture->GetFileName();
+					// ファイルパスからファイル名抽出
+					string path_str(filepath);
+					string name = ExtractFileName(path_str);
+					// テクスチャ読み込み
+					LoadTexture(&model->metalnessTexture, baseDirectory + model->name + "/" + name);
+					model->metalness = 0.0f;
+					textureLoaded = true;
+				}
 			}
 
 			//隙間
@@ -339,6 +365,35 @@ void FbxLoader::ParseMaterial(FbxModel* model, FbxNode* fbxNode)
 			{
 				//モデルに読み取った値を書き込む
 				model->roughness = propSpecularRoughness.Get<float>();
+
+				const FbxFileTexture* texture = propSpecularRoughness.GetSrcObject<FbxFileTexture>();
+				if (texture)
+				{
+					const char* filepath = texture->GetFileName();
+					// ファイルパスからファイル名抽出
+					string path_str(filepath);
+					string name = ExtractFileName(path_str);
+					// テクスチャ読み込み
+					LoadTexture(&model->roughnessTexture, baseDirectory + model->name + "/" + name);
+					model->roughness = 0.0f;
+					textureLoaded = true;
+				}
+			}
+
+			//法線マップ
+			const FbxProperty propNormalCamera = FbxSurfaceMaterialUtils::GetProperty("normalCamera", material);
+			if (propNormalCamera.IsValid())
+			{
+				const FbxFileTexture* texture = propNormalCamera.GetSrcObject<FbxFileTexture>();
+				if (texture)
+				{
+					const char* filepath = texture->GetFileName();
+					// ファイルパスからファイル名抽出
+					string path_str(filepath);
+					string name = ExtractFileName(path_str);
+					// テクスチャ読み込み
+					LoadTexture(&model->normalTexture, baseDirectory + model->name + "/" + name);
+				}
 			}
 
 			//サブサーフェス
@@ -401,18 +456,18 @@ void FbxLoader::ParseMaterial(FbxModel* model, FbxNode* fbxNode)
 		// テクスチャがない場合は白テクスチャを貼る
 		if (!textureLoaded)
 		{
-			LoadTexture(model, baseDirectory + defaultTextureFileName);
+			LoadTexture(&model->baseTexture, baseDirectory + defaultTextureFileName);
 		}
 	}
 }
 
-void FbxLoader::LoadTexture(FbxModel* model, const std::string& fullpath)
+void FbxLoader::LoadTexture(TextureData* texData, const std::string& fullpath)
 {
 	HRESULT result = S_FALSE;
 
 	// WICテクスチャのロード
-	TexMetadata& metadata = model->metadata;
-	ScratchImage& scratchImg = model->scratchImg;
+	TexMetadata& metadata = texData->metaData;
+	ScratchImage& scratchImg = texData->scratchImg;
 
 	// ユニコード文字列に変換
 	wchar_t wfilepath[128];

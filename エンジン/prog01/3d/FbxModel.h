@@ -28,6 +28,19 @@ struct Node
 	Node* parent = nullptr;
 };
 
+//テクスチャデータ
+struct TextureData
+{
+	//テクスチャメタデータ
+	DirectX::TexMetadata metaData = {};
+	//スクラッチイメージ
+	DirectX::ScratchImage scratchImg = {};
+	//テクスチャバッファ
+	Microsoft::WRL::ComPtr<ID3D12Resource> texbuff;
+	//SRVのGPUハンドル
+	CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle;
+};
+
 class FbxModel
 {
 public:
@@ -51,6 +64,8 @@ private: // エイリアス
 public:// 定数
 	//ボーンインデックスの最大数
 	static const int MAX_BONE_INDICES = 4;
+	//テクスチャの最大数
+	static const int MAX_TEXTURES = 4;
 
 public: // サブクラス
 	// 頂点データ構造体
@@ -79,7 +94,7 @@ public: // サブクラス
 		}
 	};
 
-
+	//定数バッファ用のデータ構造体(マテリアル)
 	struct ConstBufferDataMaterial
 	{
 		//アルベド
@@ -103,6 +118,8 @@ public:
 	const XMMATRIX& GetModelTransform() { return meshNode->globalTransform; }
 	//マテリアルパラメータ転送
 	void TransferMaterial();
+	//
+	void CreateTexture(TextureData& texture, ID3D12Device* device, int srvIndex);
 
 	//getrer
 	std::vector<Bone>& GetBones() { return bones; }
@@ -139,16 +156,10 @@ private:
 	DirectX::XMFLOAT3 ambient = { 1,1,1 };
 	//ディフューズ係数
 	DirectX::XMFLOAT3 diffuse = { 1,1,1 };
-	//テクスチャメタデータ
-	DirectX::TexMetadata metadata = {};
-	//スクラッチイメージ
-	DirectX::ScratchImage scratchImg = {};
 	//頂点バッファ
 	ComPtr<ID3D12Resource> vertBuff;
 	//インデックスバッファ
 	ComPtr<ID3D12Resource> indexBuff;
-	//テクスチャバッファ
-	ComPtr<ID3D12Resource> texbuff;
 	//頂点バッファビュー
 	D3D12_VERTEX_BUFFER_VIEW vbView = {};
 	//インデックスバッファビュー
@@ -167,4 +178,13 @@ private:
 	float roughness = 1.0f;
 	//定数バッファ(マテリアル)
 	ComPtr<ID3D12Resource> constBufferMaterial;
+
+	//ベーステクスチャ
+	TextureData baseTexture;
+	//メタルネステクスチャ
+	TextureData metalnessTexture;
+	//法線テクスチャ
+	TextureData normalTexture;
+	//ラフネステクスチャ
+	TextureData roughnessTexture;
 };

@@ -65,18 +65,16 @@ void GameScene::Initialize()
 	light->SetPointLightActive(2, false);
 	light->SetCircleShadowActive(0, false);
 
-	light->SetDirLightDir(0, { 0,0,1 });
-	light->SetDirLightDir(1, { 0,0,1 });
-	light->SetDirLightDir(2, { 0,0,1 });
-
 	// モデル読み込み
 
 	// 3Dオブジェクト生成
 
 	//.fbxの名前を指定してモデルを読み込む
-	fbxModel = FbxLoader::GetInstance()->LoadModelFromFile("SpherePBR");
+	fbxModel = FbxLoader::GetInstance()->LoadModelFromFile("SpiralPBRMaps");
 
-	fbxModel->SetMetalness(0);
+	fbxModel->SetMetalness(0.5f);
+	fbxModel->SetSpecular(1.0f);
+	fbxModel->SetRoughness(0.3f);
 	fbxModel->TransferMaterial();
 
 	// FBXオブジェクト生成
