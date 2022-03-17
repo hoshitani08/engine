@@ -58,8 +58,8 @@ void GameScene::Initialize()
 	//.fbxオブジェクトにライトをセット
 	FbxObject3d::SetLight(light.get());
 	light->SetDirLightActive(0, true);
-	light->SetDirLightActive(1, false);
-	light->SetDirLightActive(2, false);
+	light->SetDirLightActive(1, true);
+	light->SetDirLightActive(2, true);
 	light->SetPointLightActive(0, false);
 	light->SetPointLightActive(1, false);
 	light->SetPointLightActive(2, false);
@@ -72,7 +72,7 @@ void GameScene::Initialize()
 	//.fbxの名前を指定してモデルを読み込む
 	fbxModel = FbxLoader::GetInstance()->LoadModelFromFile("SpiralPBRMaps");
 
-	fbxModel->SetMetalness(0.5f);
+	fbxModel->SetMetalness(0.0f);
 	fbxModel->SetSpecular(1.0f);
 	fbxModel->SetRoughness(0.3f);
 	fbxModel->TransferMaterial();
