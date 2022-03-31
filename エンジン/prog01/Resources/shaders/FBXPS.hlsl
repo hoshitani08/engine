@@ -59,7 +59,7 @@ float3 DisneyFresnel(float LdotH)
 	//”ñ‹à‘®‚Ì‹¾–Ê”½ËF‚ÌŒvZ
 	float3 nonMetalColor = specular * 0.08f * tintColor;
 	//metalness‚É‚æ‚éF•âŠÔ ‹à‘®‚Ìê‡‚Íƒx[ƒXƒJƒ‰[
-	float3 specularColor = lerp(nonMetalColor, baseColor, metalness);
+	float3 specularColor = lerp(nonMetalColor, s_baseColor, s_metalness);
 	//NdotH‚ÌŠ„‡‚ÅSchlickFresnel•âŠÔ
 	return SchlickFresnel3(specularColor, float3(1,1,1), LdotH);
 }
@@ -67,7 +67,7 @@ float3 DisneyFresnel(float LdotH)
 //UE4‚ÌSmithƒ‚ƒfƒ‹
 float GeometricSmith(float cosine)
 {
-	float k = (roughness + 1.0f);
+	float k = (s_roughness + 1.0f);
 
 	k = k * k / 8.0f;
 
@@ -78,7 +78,7 @@ float GeometricSmith(float cosine)
 float3 CookTorranceSpecular(float NdotL, float NdotV, float NdotH, float LdotH)
 {
 	//D€(•ª•z:Distribution)
-	float Ds = DistributionGGX(roughness * roughness, NdotH);
+	float Ds = DistributionGGX(s_roughness * s_roughness, NdotH);
 
 	//F€(ƒtƒŒƒlƒ‹:Fresnel)
 	float3 Fs = DisneyFresnel(LdotH);
@@ -115,18 +115,18 @@ float3 BRDF(float3 L, float3 V)
 	float diffuseReflectance = 1.0f / PI;
 
 	//“üËŠp‚ª90“x‚Ìê‡‚ÌŠgU”½Ë—¦
-	float energyBias = 0.5f * roughness;
-	float Fd90 = energyBias + 2.0f * LdotH * LdotH * roughness;
+	float energyBias = 0.5f * s_roughness;
+	float Fd90 = energyBias + 2.0f * LdotH * LdotH * s_roughness;
 	//“ü‚Á‚Ä‚¢‚­‚ÌŠgU”½Ë—¦
 	float FL = SchlickFresnel(1.0f, Fd90, NdotL);
 	//o‚Ä‚¢‚­‚ÌŠgU”½Ë—¦
 	float FV = SchlickFresnel(1.0f, Fd90, NdotV);
 	//“ü‚Á‚Äo‚Ä‚¢‚­‚Ü‚Å‚ÌŠgU”½Ë—¦
-	float energyFacter = lerp(1.0f, 1.0f / 1.51f, roughness);
+	float energyFacter = lerp(1.0f, 1.0f / 1.51f, s_roughness);
 	float Fd = FL * FV * energyFacter;
 
 	//ŠgU”½Ë€
-	float3 diffuseColor = diffuseReflectance * Fd * baseColor * (1 - metalness);
+	float3 diffuseColor = diffuseReflectance * Fd * s_baseColor * (1 - s_metalness);
 
 	//‹¾–Ê”½Ë€
 	float3 specularColor = CookTorranceSpecular(NdotL, NdotV, NdotH, LdotH);
@@ -159,5 +159,5 @@ float4 main(VSOutput input) : SV_TARGET
 		finalRGB += BRDF(dirLights[i].lightv, eyedir) * dirLights[i].lightcolor;
 	}
 
-	return float4(finalRGB, 1);
+	return float4(finalRGB, alpha);
 }

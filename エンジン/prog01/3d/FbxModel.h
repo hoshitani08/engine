@@ -105,6 +105,7 @@ public: // サブクラス
 		float specular;
 		//粗さ
 		float roughness;
+		float alpha; //アルファ
 		//パディング(16Byte境界)
 		float pad[2];
 	};
@@ -133,6 +134,7 @@ public:
 	void SetMetalness(float _metalness) { metalness = _metalness; }
 	void SetSpecular(float _specular) { specular = _specular; }
 	void SetRoughness(float _roughness) { roughness = _roughness; }
+	void SetAlpha(float _alpha) { alpha = _alpha; }
 
 	//デストラクタ
 	~FbxModel();
@@ -176,6 +178,8 @@ private:
 	float specular = 1.0f;
 	//粗さ
 	float roughness = 1.0f;
+	//アルファ
+	float alpha = 1.0f;
 	//定数バッファ(マテリアル)
 	ComPtr<ID3D12Resource> constBufferMaterial;
 

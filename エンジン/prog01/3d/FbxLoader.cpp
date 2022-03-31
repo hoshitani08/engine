@@ -302,6 +302,42 @@ void FbxLoader::ParseMaterial(FbxModel* model, FbxNode* fbxNode)
 
 		if (material)
 		{
+			// FbxSurfaceLambertクラスかどうかを調べる
+			if (material->GetClassId().Is(FbxSurfaceLambert::ClassId))
+			{
+				FbxSurfaceLambert* lambert = static_cast<FbxSurfaceLambert*>(material);
+
+				//環境光係数
+				FbxPropertyT<FbxDouble3> ambient = lambert->Ambient;
+				model->ambient.x = (float)ambient.Get()[0];
+				model->ambient.y = (float)ambient.Get()[1];
+				model->ambient.z = (float)ambient.Get()[2];
+
+				//拡散反射光係数
+				FbxPropertyT<FbxDouble3> diffuse = lambert->Diffuse;
+				model->diffuse.x = (float)diffuse.Get()[0];
+				model->diffuse.y = (float)diffuse.Get()[1];
+				model->diffuse.z = (float)diffuse.Get()[2];
+			}
+
+			// ディフューズテクスチャを取り出す
+			const FbxProperty diffuseProperty = material->FindProperty(FbxSurfaceMaterial::sDiffuse);
+			if (diffuseProperty.IsValid())
+			{
+				const FbxFileTexture* texture = diffuseProperty.GetSrcObject<FbxFileTexture>();
+				if (texture)
+				{
+					const char* filepath = texture->GetFileName();
+					// ファイルパスからファイル名抽出
+					string path_str(filepath);
+					string name = ExtractFileName(path_str);
+					// テクスチャ読み込み
+					LoadTexture(&model->baseTexture, baseDirectory + model->name + "/" + name);
+					model->baseColor = { 0,0,0 };
+					textureLoaded = true;
+				}
+			}
+
 			//マテリアル名(デバック用)
 			string name = material->GetName();
 

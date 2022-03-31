@@ -38,7 +38,7 @@ void GameScene::Initialize()
 	DebugText::GetInstance()->Initialize(debugTextTexNumber);
 
 	// テクスチャ読み込み
-	if (!Sprite::LoadTexture(1, L"Resources/white1x1.png"))
+	if (!Sprite::LoadTexture(1, L"Resources/APEX_01.png"))
 	{
 		assert(0);
 	}
@@ -58,8 +58,8 @@ void GameScene::Initialize()
 	//.fbxオブジェクトにライトをセット
 	FbxObject3d::SetLight(light.get());
 	light->SetDirLightActive(0, true);
-	light->SetDirLightActive(1, true);
-	light->SetDirLightActive(2, true);
+	light->SetDirLightActive(1, false);
+	light->SetDirLightActive(2, false);
 	light->SetPointLightActive(0, false);
 	light->SetPointLightActive(1, false);
 	light->SetPointLightActive(2, false);
@@ -70,11 +70,12 @@ void GameScene::Initialize()
 	// 3Dオブジェクト生成
 
 	//.fbxの名前を指定してモデルを読み込む
-	fbxModel = FbxLoader::GetInstance()->LoadModelFromFile("SpiralPBRMaps");
+	fbxModel = FbxLoader::GetInstance()->LoadModelFromFile("uma");
 
 	fbxModel->SetMetalness(0.0f);
 	fbxModel->SetSpecular(1.0f);
 	fbxModel->SetRoughness(0.3f);
+	//fbxModel->SetAlpha(0.f);
 	fbxModel->TransferMaterial();
 
 	// FBXオブジェクト生成
@@ -87,7 +88,7 @@ void GameScene::Initialize()
 
 	// カメラ注視点をセット
 	camera->SetTarget({ 0, 0, 0 });
-	camera->SetEye({ 0, 0, -3 });
+	camera->SetEye({ 0, 0, -15 });
 }
 
 void GameScene::Finalize()
@@ -100,10 +101,35 @@ void GameScene::Update()
 	light->Update();
 	camera->Update();
 	particleMan->Update();
+	// オブジェクト移動
+	if (input->PushKey(DIK_W) || input->PushKey(DIK_S) || input->PushKey(DIK_D) || input->PushKey(DIK_A))
+	{
+		static XMVECTOR p = { 0,0,1,0 };
+		// 移動後の座標を計算
+		if (input->PushKey(DIK_S))
+		{
+			p.m128_f32[1] += 0.1f;
+		}
+		else if (input->PushKey(DIK_W))
+		{
+			p.m128_f32[1] -= 0.1f;
+		}
 
-	XMFLOAT3 rot = fbxObject3d->GetRotation();
+		if (input->PushKey(DIK_A))
+		{
+			p.m128_f32[0] += 0.1f;
+		}
+		else if (input->PushKey(DIK_D))
+		{
+			p.m128_f32[0] -= 0.1f;
+		}
+		light->SetDirLightDir(0, p);
+	}
+
+
+	/*XMFLOAT3 rot = fbxObject3d->GetRotation();
 	rot.y += 1.0f;
-	fbxObject3d->SetRotation(rot);
+	fbxObject3d->SetRotation(rot);*/
 
 	if (input->TriggerKey(DIK_C))
 	{

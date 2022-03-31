@@ -51,6 +51,8 @@ cbuffer cbuff1 : register(b1)
 	float specular;
 	//粗さ
 	float roughness;
+	//アルファ
+	float alpha;
 }
 
 // 平行光源の数
@@ -59,6 +61,7 @@ static const int DIRLIGHT_NUM = 3;
 struct DirLight
 {
 	float3 lightv;    // ライトへの方向の単位ベクトル
+	float pad1;
 	float3 lightcolor;    // ライトの色(RGB)
 	uint active;
 };
@@ -103,6 +106,7 @@ struct CircleShadow
 cbuffer cbuff2 : register(b2)
 {
 	float3 ambientColor;
+	float pad1;
 	DirLight dirLights[DIRLIGHT_NUM];
 	PointLight pointLights[POINTLIGHT_NUM];
 	SpotLight spotLights[SPOTLIGHT_NUM];
