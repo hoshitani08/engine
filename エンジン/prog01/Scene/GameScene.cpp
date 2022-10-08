@@ -70,7 +70,7 @@ void GameScene::Initialize()
 	// 3Dオブジェクト生成
 
 	//.fbxの名前を指定してモデルを読み込む
-	fbxModel = FbxLoader::GetInstance()->LoadModelFromFile("uma");
+	fbxModel = FbxLoader::GetInstance()->LoadModelFromFile("slime");
 
 	fbxModel->SetMetalness(0.0f);
 	fbxModel->SetSpecular(1.0f);
@@ -80,6 +80,8 @@ void GameScene::Initialize()
 
 	// FBXオブジェクト生成
 	fbxObject3d = FbxObject3d::Create(fbxModel.get());
+
+	fbxObject3d->SetScale({ 0.1f, 0.1f, 0.1 });
 	//アニメーション
 	//fbxObject3d->PlayAnimation();
 
